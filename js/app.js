@@ -58,7 +58,7 @@ const INSERT_ROW_BATCH = 10;
 const PHOTO_COL = COL.PHOTO;
 const PHOTO_THUMB_PX = 44;
 const TYPE_SOURCE = [
-  ROW_TYPE.PRODUIT,
+  ROW_TYPE.ARTICLE,
   ROW_TYPE.PARENT,
   ROW_TYPE.SOUS,
 ];
@@ -119,7 +119,7 @@ function photoCellValue(row, allRows) {
 function emptyRow() {
   return [
     EMPTY_PHOTO_DATA_URL,
-    ROW_TYPE.PRODUIT,
+    ROW_TYPE.ARTICLE,
     '',
     1,
     0,
@@ -158,7 +158,7 @@ function rowsForGrid(rows) {
     }
     next[COL.PHOTO] = photoCellValue(next, padded);
     if (!next[COL.TYPE]) {
-      next[COL.TYPE] = ROW_TYPE.PRODUIT;
+      next[COL.TYPE] = ROW_TYPE.ARTICLE;
     }
     next[COL.LOT] = neatNum(next[COL.LOT]);
     next[COL.PRICE] = neatNum(next[COL.PRICE]);
@@ -209,7 +209,7 @@ const COLUMNS = [
     width: 130,
     source: TYPE_SOURCE,
   },
-  { type: 'text', title: 'Produit / Libellé', width: NAME_COL_MIN_WIDTH },
+  { type: 'text', title: 'Article / Libellé', width: NAME_COL_MIN_WIDTH },
   {
     type: 'numeric',
     title: 'Vendu par lots de',
@@ -219,7 +219,13 @@ const COLUMNS = [
   { type: 'numeric', title: 'Coût', width: 80 },
   { type: 'text', title: 'Code-barres', width: 140 },
   { type: 'text', title: 'Catégorie', width: 120 },
-  { type: 'text', title: 'Parent', width: 140, readOnly: true },
+  {
+    type: 'text',
+    title: 'Parent',
+    width: 140,
+    readOnly: true,
+    tooltip: 'Renseigné uniquement pour les sous-articles (via le dialogue de liaison).',
+  },
 ];
 
 const FIXED_COLS_WIDTH = COLUMNS.reduce(
@@ -319,7 +325,7 @@ function applyRowStyles() {
   const data =
     typeof worksheet.getData === 'function' ? worksheet.getData() : [];
   for (let y = 0; y < data.length; y += 1) {
-    const type = String(data[y]?.[COL.TYPE] ?? ROW_TYPE.PRODUIT);
+    const type = String(data[y]?.[COL.TYPE] ?? ROW_TYPE.ARTICLE);
     let tr = null;
     const cell0 =
       typeof worksheet.getCellFromCoords === 'function'
@@ -332,7 +338,7 @@ function applyRowStyles() {
       continue;
     }
     tr.classList.remove(
-      'row-type-produit',
+      'row-type-article',
       'row-type-parent',
       'row-type-sous',
     );
@@ -341,12 +347,11 @@ function applyRowStyles() {
     } else if (type === ROW_TYPE.SOUS) {
       tr.classList.add('row-type-sous');
     } else {
-      tr.classList.add('row-type-produit');
+      tr.classList.add('row-type-article');
     }
 
     const sellOk = sellFieldsEditable(type);
     const catOk = categoryEditable(type);
-    const parentOk = type === ROW_TYPE.SOUS;
     for (const col of [COL.LOT, COL.PRICE, COL.COST, COL.BARCODE]) {
       const td =
         typeof worksheet.getCellFromCoords === 'function'
@@ -363,12 +368,15 @@ function applyRowStyles() {
     if (catTd) {
       catTd.classList.toggle('cell-disabled', !catOk);
     }
+    // Parent is only meaningful for sous-articles: leave other rows blank
+    // (no grey hatch) and lightly mark the linked value on sous rows.
     const parentTd =
       typeof worksheet.getCellFromCoords === 'function'
         ? worksheet.getCellFromCoords(COL.PARENT, y)
         : null;
     if (parentTd) {
-      parentTd.classList.toggle('cell-disabled', !parentOk);
+      parentTd.classList.remove('cell-disabled');
+      parentTd.classList.toggle('cell-parent-link', type === ROW_TYPE.SOUS);
     }
   }
 }
@@ -415,7 +423,7 @@ function applySheetHeight() {
 }
 
 /**
- * Stretch "Produit / Libellé" so the grid fills the viewport width.
+ * Stretch "Article / Libellé" so the grid fills the viewport width.
  * Updates the colgroup directly to avoid polluting jspreadsheet undo history.
  */
 function applyNameColumnWidth() {
@@ -464,7 +472,7 @@ function openSousProduitDialog(rowIndex, previousType) {
   const parents = listParentNames(data);
   if (parents.length === 0) {
     setStatus(
-      'Créez d’abord une ligne « Produit parent » avant un sous-produit.',
+      'Créez d’abord une ligne « Article parent » avant un sous-article.',
     );
     syncingFromStore = true;
     try {
@@ -525,7 +533,7 @@ function handleTypeChange(rowIndex, newType, previousType) {
   }
   if (previousType === ROW_TYPE.SOUS) {
     const ok = window.confirm(
-      'Détacher ce sous-produit du produit parent ? Cette action a des conséquences sur le regroupement.',
+      'Détacher ce sous-article de l’article parent ? Cette action a des conséquences sur le regroupement.',
     );
     if (!ok) {
       syncingFromStore = true;
@@ -539,7 +547,7 @@ function handleTypeChange(rowIndex, newType, previousType) {
     syncingFromStore = true;
     try {
       worksheet.setValueFromCoords(COL.PARENT, rowIndex, '', true);
-      if (newType === ROW_TYPE.PRODUIT) {
+      if (newType === ROW_TYPE.ARTICLE) {
         const lot = worksheet.getValueFromCoords(COL.LOT, rowIndex);
         if (lot === '' || lot == null) {
           worksheet.setValueFromCoords(COL.LOT, rowIndex, 1, true);
@@ -601,7 +609,7 @@ sousForm.addEventListener('submit', (e) => {
     syncingFromStore = false;
   }
   applyRowStyles();
-  setStatus(`Sous-produit lié à « ${parent} » (lots de ${lot}).`);
+  setStatus(`Sous-article lié à « ${parent} » (lots de ${lot}).`);
 });
 
 /**
@@ -669,7 +677,7 @@ function initSpreadsheet() {
       }
       const col = Number(colIndex);
       const row = instance?.options?.data?.[rowIndex] ?? [];
-      const type = String(row[COL.TYPE] ?? ROW_TYPE.PRODUIT);
+      const type = String(row[COL.TYPE] ?? ROW_TYPE.ARTICLE);
 
       if (col === COL.PARENT) {
         return previousCellValue(instance, colIndex, rowIndex);
@@ -681,11 +689,11 @@ function initSpreadsheet() {
           col === COL.BARCODE) &&
         !sellFieldsEditable(type)
       ) {
-        setStatus('Champ non éditable pour un produit parent.', { alert: true });
+        setStatus('Champ non éditable pour un article parent.', { alert: true });
         return previousCellValue(instance, colIndex, rowIndex);
       }
       if (col === COL.CATEGORY && !categoryEditable(type)) {
-        setStatus('Catégorie héritée du produit parent.', { alert: true });
+        setStatus('Catégorie héritée de l’article parent.', { alert: true });
         return previousCellValue(instance, colIndex, rowIndex);
       }
       if (col in NUMERIC_COLUMN_RULES) {
@@ -719,7 +727,7 @@ function initSpreadsheet() {
         handleTypeChange(
           Number(rowIndex),
           String(newValue ?? ''),
-          String(oldValue ?? ROW_TYPE.PRODUIT),
+          String(oldValue ?? ROW_TYPE.ARTICLE),
         );
         return;
       }
@@ -769,7 +777,7 @@ function applyLoadedCatalog(catalog, label) {
     0,
   );
   setStatus(
-    `${label} : ${catalog.calibres.length} produit(s), ${nArt} article(s).`,
+    `${label} : ${catalog.calibres.length} calibre(s), ${nArt} article(s).`,
   );
 }
 
@@ -841,7 +849,7 @@ async function attachPhoto(file, rowIndex) {
   const key = photoKeyForGridRow(row, data);
   if (!key.calibreTitle) {
     setStatus(
-      'Indiquez le nom (et le parent pour un sous-produit) avant la photo.',
+      'Indiquez le nom (et le parent pour un sous-article) avant la photo.',
     );
     return;
   }
@@ -877,7 +885,7 @@ exportBtn.addEventListener('click', async () => {
   const catalog = store.catalog;
   if (!catalog.calibres.length) {
     setExportError(
-      'Catalogue vide — chargez un fichier ou saisissez un produit.',
+      'Catalogue vide — chargez un fichier ou saisissez un article.',
     );
     return;
   }
@@ -906,4 +914,4 @@ store.subscribe(() => {
 });
 
 initSpreadsheet();
-setStatus('Chargez un fichier, ou saisissez un produit dans le tableau.');
+setStatus('Chargez un fichier, ou saisissez un article dans le tableau.');

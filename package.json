@@ -1,8 +1,8 @@
 {
-  "name": "studio-produits",
+  "name": "studio-weebi",
   "version": "0.1.0",
   "private": true,
-  "description": "Gestionnaire de références produits Weebi — export .weebi",
+  "description": "Studio Weebi — gestionnaire de références articles, export .weebi",
   "type": "module",
   "scripts": {
     "test": "node --test test/",

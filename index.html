@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Studio Produits Weebi</title>
+  <title>Studio Weebi</title>
   <link rel="stylesheet" href="node_modules/jsuites/dist/jsuites.css" type="text/css" />
   <link rel="stylesheet" href="node_modules/jspreadsheet-ce/dist/jspreadsheet.css" type="text/css" />
   <link rel="stylesheet" href="css/studio.css" />
@@ -11,7 +11,7 @@
 <body>
   <header>
     <div class="title-row">
-      <h1>Studio Produits Weebi</h1>
+      <h1>Studio Weebi</h1>
       <div class="export-block">
         <button id="exportBtn" type="button" class="btn primary">Exporter .weebi</button>
         <p id="exportError" class="export-error" hidden role="alert"></p>
@@ -59,12 +59,12 @@
 
   <dialog id="sousProduitDialog" class="studio-dialog">
     <form method="dialog" id="sousProduitForm" class="studio-dialog-form">
-      <h2>Lier un sous-produit</h2>
+      <h2>Lier un sous-article</h2>
       <p class="dialog-hint">
-        Choisissez un produit parent existant et le nombre d’unités vendues par lot.
+        Choisissez un article parent existant et le nombre d’unités vendues par lot.
       </p>
       <label class="dialog-field">
-        Produit parent
+        Article parent
         <select id="sousParentSelect" required></select>
       </label>
       <label class="dialog-field">

@@ -8,7 +8,7 @@
   --warn-bg: #fff7ed;
   --warn-ink: #9a3412;
   --warn-line: #fdba74;
-  --row-produit: #ffffff;
+  --row-article: #ffffff;
   --row-parent: #e8f1fb;
   --row-sous: #eaf7ef;
   --cell-disabled: #cbd5e1;
@@ -249,8 +249,8 @@ main {
   background: #e7e5e4;
 }
 
-#spreadsheet tr.row-type-produit > td {
-  background-color: var(--row-produit);
+#spreadsheet tr.row-type-article > td {
+  background-color: var(--row-article);
 }
 
 #spreadsheet tr.row-type-parent > td {
@@ -272,6 +272,13 @@ main {
   ) !important;
   color: #64748b !important;
   cursor: not-allowed;
+}
+
+/* Sous-article parent link: positive cue instead of greying N/A cells */
+#spreadsheet td.cell-parent-link {
+  font-style: italic;
+  color: var(--accent-dark);
+  box-shadow: inset 3px 0 0 var(--accent);
 }
 
 .studio-dialog {

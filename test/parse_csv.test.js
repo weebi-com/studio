@@ -3,13 +3,13 @@ import assert from 'node:assert/strict';
 import { parseCatalogCsv } from '../js/catalog/parse_csv.js';
 
 describe('parseCatalogCsv', () => {
-  it('parses type-based Studio CSV with parent and sous-produits', () => {
+  it('parses type-based Studio CSV with parent and sous-articles', () => {
     const csv = [
       'type,name,lot,price,cost,barcode_ean,category,parent',
-      'Produit parent,Coca-Cola,,,,,Boissons,',
-      'Sous-produit,Coca 33cl,1,500,300,5449000000996,,Coca-Cola',
-      'Sous-produit,Coca x6,6,2800,1700,5449000054227,,Coca-Cola',
-      'Produit,Sucre 1kg,1,100,80,,,',
+      'Article parent,Coca-Cola,,,,,Boissons,',
+      'Sous-article,Coca 33cl,1,500,300,5449000000996,,Coca-Cola',
+      'Sous-article,Coca x6,6,2800,1700,5449000054227,,Coca-Cola',
+      'Article,Sucre 1kg,1,100,80,,,',
     ].join('\n');
 
     const catalog = parseCatalogCsv(csv);
@@ -19,6 +19,22 @@ describe('parseCatalogCsv', () => {
     assert.equal(coca.articles.length, 2);
     assert.equal(coca.articles[1].unitsInOnePiece, 6);
     assert.equal(catalog.categories[0].title, 'Boissons');
+  });
+
+  it('still parses legacy Produit / Sous-produit CSV labels', () => {
+    const csv = [
+      'type,name,lot,price,cost,barcode_ean,category,parent',
+      'Produit parent,Coca-Cola,,,,,Boissons,',
+      'Sous-produit,Coca 33cl,1,500,300,,,Coca-Cola',
+      'Produit,Sucre 1kg,1,100,80,,,',
+    ].join('\n');
+
+    const catalog = parseCatalogCsv(csv);
+    assert.equal(catalog.calibres.length, 2);
+    assert.equal(
+      catalog.calibres.find((c) => c.title === 'Coca-Cola').articles.length,
+      1,
+    );
   });
 
   it('parses legacy Studio CSV with a migration warning', () => {

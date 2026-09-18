@@ -27,7 +27,7 @@ describe('catalog rows', () => {
     ]);
   });
 
-  it('flattens multi-article calibres as parent + sous-produits', () => {
+  it('flattens multi-article calibres as parent + sous-articles', () => {
     const catalog = {
       calibres: [
         {
@@ -72,7 +72,7 @@ describe('catalog rows', () => {
     assert.equal(rows[2][COL.LOT], 6);
   });
 
-  it('maps single-article calibre to Produit row', () => {
+  it('maps single-article calibre to Article row', () => {
     const catalog = {
       calibres: [
         {
@@ -94,7 +94,7 @@ describe('catalog rows', () => {
     };
     const rows = catalogToRows(catalog);
     assert.equal(rows.length, 1);
-    assert.equal(rows[0][COL.TYPE], ROW_TYPE.PRODUIT);
+    assert.equal(rows[0][COL.TYPE], ROW_TYPE.ARTICLE);
     assert.equal(rows[0][COL.NAME], 'Sucre 1kg');
   });
 
@@ -113,7 +113,7 @@ describe('catalog rows', () => {
       ['', ROW_TYPE.PARENT, 'Coca-Cola', '', '', '', '', 'Boissons', ''],
       ['', ROW_TYPE.SOUS, 'Coca 33cl', 1, 500, 300, 'A', 'Boissons', 'Coca-Cola'],
       ['', ROW_TYPE.SOUS, 'Coca x6', 6, 2800, 1700, 'B', 'Boissons', 'Coca-Cola'],
-      ['', ROW_TYPE.PRODUIT, 'Sucre 1kg', 1, 100, 80, '', '', ''],
+      ['', ROW_TYPE.ARTICLE, 'Sucre 1kg', 1, 100, 80, '', '', ''],
     ];
     const photos = [{ calibreTitle: 'Coca-Cola', id: 0, data: [9] }];
     const catalog = rowsToCatalog(rows, photos);
@@ -128,13 +128,13 @@ describe('catalog rows', () => {
 
   it('skips blank names when converting rows', () => {
     const catalog = rowsToCatalog(
-      [['', ROW_TYPE.PRODUIT, '', 1, 1, 0, '', '', '']],
+      [['', ROW_TYPE.ARTICLE, '', 1, 1, 0, '', '', '']],
       [],
     );
     assert.equal(catalog.calibres.length, 0);
   });
 
-  it('warns and skips orphan sous-produits', () => {
+  it('warns and skips orphan sous-articles', () => {
     const catalog = rowsToCatalog(
       [
         ['', ROW_TYPE.SOUS, 'Orphelin', 1, 10, 0, '', '', 'Missing'],
@@ -195,12 +195,12 @@ describe('catalog rows', () => {
       { calibreTitle: 'X', id: 0, data: [1] },
       { calibreTitle: 'X', id: 2, data: [2] },
     ];
-    assert.equal(photoStatusForRow('X', 1, photos), 'produit');
+    assert.equal(photoStatusForRow('X', 1, photos), 'article');
     assert.equal(photoStatusForRow('X', 2, photos), 'ligne');
     assert.equal(photoStatusForRow('Y', 1, photos), '＋');
   });
 
-  it('builds photo keys for sous-produit rows by sibling order', () => {
+  it('builds photo keys for sous-article rows by sibling order', () => {
     const rows = [
       ['', ROW_TYPE.PARENT, 'Coca', '', '', '', '', '', ''],
       ['', ROW_TYPE.SOUS, '33cl', 1, 1, 0, '', '', 'Coca'],

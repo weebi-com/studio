@@ -1,33 +1,33 @@
-# Studio Produits
+# Studio Weebi
 
-Gestionnaire de références produits Weebi (éditeur libre, sans authentification).
+Gestionnaire de références articles Weebi (éditeur libre, sans authentification).
 
 ## Objectif
 
 - Charger un pack **`.weebi`**, un export Weebi (**JSON articles**) ou un CSV Studio
-- Éditer en tableur (jspreadsheet) avec types **Produit / Produit parent / Sous-produit**
+- Éditer en tableur (jspreadsheet) avec types **Article / Article parent / Sous-article**
 - Joindre des **photos** (redimensionnées JPEG, BLOB dans le pack)
 - Exporter un fichier **SQLite `.weebi`** importable dans l’app Weebi
 
 ## Workflow recommandé
 
 1. **Charger** un `.weebi`, un JSON Weebi (`*_articles.json`), ou un CSV Studio
-2. Pour un produit simple : Type **Produit**, renseigner libellé / prix / lots
+2. Pour un article simple : Type **Article**, renseigner libellé / prix / lots
 3. Pour des déclinaisons (ex. Coca 33cl + Coca x6) :
-   - créer une ligne **Produit parent** (nom du produit, sans prix)
-   - sur une autre ligne, passer Type à **Sous-produit** → dialogue (parent + **Vendu par lots de**)
+   - créer une ligne **Article parent** (nom du calibre, sans prix)
+   - sur une autre ligne, passer Type à **Sous-article** → dialogue (parent + **Vendu par lots de**)
 4. Optionnel : cliquer **Photo** pour joindre une image
 5. **Exporter .weebi** → importer le pack dans Weebi
 
 ### Colonnes
 
-`Photo | Type | Produit / Libellé | Vendu par lots de | Prix | Coût | Code-barres | Catégorie | Parent`
+`Photo | Type | Article / Libellé | Vendu par lots de | Prix | Coût | Code-barres | Catégorie | Parent`
 
 | Type | Rôle |
 |------|------|
-| **Produit** | Produit autonome (calibre + 1 article) |
-| **Produit parent** | Calibre visible, sans prix/coût |
-| **Sous-produit** | Article lié à un produit parent (`unitsInOnePiece` = lots) |
+| **Article** | Article autonome (calibre + 1 article) |
+| **Article parent** | Calibre visible, sans prix/coût |
+| **Sous-article** | Article lié à un article parent (`unitsInOnePiece` = lots) |
 
 ### Sources de données
 
@@ -67,5 +67,5 @@ npm start
 - Articles **retail** uniquement (paniers ignorés à l’import JSON / `.weebi`)
 - `stock_unit` fixé à `unit`
 - Cap soft : ~500 articles, peu de photos
-- Pas d’auto-promotion d’un Produit en Produit parent
+- Pas d’auto-promotion d’un Article en Article parent
 - Pas de chargement des exports catégories / chemins photos Weebi (hors pack `.weebi`)

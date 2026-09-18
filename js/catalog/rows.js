@@ -1,8 +1,8 @@
 /** Row Type values (spreadsheet "Type" column). */
 export const ROW_TYPE = {
-  PRODUIT: 'Produit',
-  PARENT: 'Produit parent',
-  SOUS: 'Sous-produit',
+  ARTICLE: 'Article',
+  PARENT: 'Article parent',
+  SOUS: 'Sous-article',
 };
 
 /** Spreadsheet column indexes. */
@@ -40,10 +40,16 @@ function parseNum(value, fallback = 0) {
 
 function normType(raw) {
   const t = String(raw ?? '').trim();
-  if (t === ROW_TYPE.PARENT || t === ROW_TYPE.SOUS || t === ROW_TYPE.PRODUIT) {
-    return t;
+  if (t === ROW_TYPE.PARENT || t === 'Produit parent') {
+    return ROW_TYPE.PARENT;
   }
-  return ROW_TYPE.PRODUIT;
+  if (t === ROW_TYPE.SOUS || t === 'Sous-produit') {
+    return ROW_TYPE.SOUS;
+  }
+  if (t === ROW_TYPE.ARTICLE || t === 'Produit') {
+    return ROW_TYPE.ARTICLE;
+  }
+  return ROW_TYPE.ARTICLE;
 }
 
 /**
@@ -72,7 +78,7 @@ export function photoForRow(calibreTitle, articleId, photos = []) {
 /**
  * Photo lookup key for a grid row (type-aware).
  * @param {Array<any>} row
- * @param {Array<Array<any>>} [allRows] used to resolve sous-produit article index
+ * @param {Array<Array<any>>} [allRows] used to resolve sous-article article index
  */
 export function photoKeyForGridRow(row, allRows = []) {
   const type = normType(row?.[COL.TYPE]);
@@ -110,7 +116,7 @@ export function photoStatusForRow(calibreTitle, articleId, photos = []) {
   if (!photo) {
     return '＋';
   }
-  return photo.id > 0 ? 'ligne' : 'produit';
+  return photo.id > 0 ? 'ligne' : 'article';
 }
 
 function emptyPhotoSlot() {
@@ -162,7 +168,7 @@ export function catalogToRows(catalog) {
         Number(a.unitsInOnePiece) > 0 ? Number(a.unitsInOnePiece) : 1;
       rows.push([
         emptyPhotoSlot(),
-        ROW_TYPE.PRODUIT,
+        ROW_TYPE.ARTICLE,
         designation,
         lot,
         Number(a.price) || 0,
@@ -238,7 +244,7 @@ export function rowsToCatalog(rows, photos = []) {
     categoryToTitles.get(cat).add(calibreTitle);
   };
 
-  // First pass: register parents and standalone produits
+  // First pass: register parents and standalone articles
   for (const row of rows ?? []) {
     const type = normType(row[COL.TYPE]);
     const name = String(row[COL.NAME] ?? '').trim();
@@ -253,7 +259,7 @@ export function rowsToCatalog(rows, photos = []) {
       continue;
     }
 
-    if (type === ROW_TYPE.PRODUIT) {
+    if (type === ROW_TYPE.ARTICLE) {
       const calibre = ensureCalibre(name);
       let lot = parseNum(row[COL.LOT], 1);
       if (lot <= 0) {
@@ -273,7 +279,7 @@ export function rowsToCatalog(rows, photos = []) {
     }
   }
 
-  // Second pass: sous-produits
+  // Second pass: sous-articles
   /** @type {Map<string, number>} */
   const nextIdByParent = new Map();
 
@@ -289,7 +295,7 @@ export function rowsToCatalog(rows, photos = []) {
     }
     if (!parent || !parentNames.has(parent)) {
       warnings.push(
-        `sous-produit « ${name || '?'} » orphelin (parent « ${parent || '—'} » introuvable), ignoré`,
+        `sous-article « ${name || '?'} » orphelin (parent « ${parent || '—'} » introuvable), ignoré`,
       );
       continue;
     }
@@ -310,7 +316,7 @@ export function rowsToCatalog(rows, photos = []) {
     });
   }
 
-  // Remap photos: keep those whose calibre still exists; article ids for sous-produits
+  // Remap photos: keep those whose calibre still exists; article ids for sous-articles
   // are reassigned 1..n — keep id=0 (parent/standalone) and article photos by sequential
   // rematch using previous photos filtered by calibre title only for id=0 always;
   // for id>0 keep if id still valid after rebuild.
@@ -370,7 +376,7 @@ export function deleteCalibreFromCatalog(catalog, calibreTitle) {
  */
 export function sellFieldsEditable(type) {
   const t = normType(type);
-  return t === ROW_TYPE.PRODUIT || t === ROW_TYPE.SOUS;
+  return t === ROW_TYPE.ARTICLE || t === ROW_TYPE.SOUS;
 }
 
 /**
@@ -379,5 +385,5 @@ export function sellFieldsEditable(type) {
  */
 export function categoryEditable(type) {
   const t = normType(type);
-  return t === ROW_TYPE.PRODUIT || t === ROW_TYPE.PARENT;
+  return t === ROW_TYPE.ARTICLE || t === ROW_TYPE.PARENT;
 }

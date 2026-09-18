@@ -121,15 +121,15 @@ export function parseCatalogCsv(csvText) {
       if (!name) {
         continue;
       }
-      if (type === 'Produit parent') {
+      if (type === 'Article parent' || type === 'Produit parent') {
         ensureCalibre(name);
         addCategory((row[6] ?? '').trim(), name);
         continue;
       }
-      if (type === 'Sous-produit') {
+      if (type === 'Sous-article' || type === 'Sous-produit') {
         const parent = (row[7] ?? '').trim();
         if (!parent) {
-          warnings.push(`ligne ${i + 2} : sous-produit sans parent, ignorée`);
+          warnings.push(`ligne ${i + 2} : sous-article sans parent, ignorée`);
           continue;
         }
         const calibre = ensureCalibre(parent);
