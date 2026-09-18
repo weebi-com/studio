@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Studio Produits Weebi</title>
+  <link rel="stylesheet" href="node_modules/jsuites/dist/jsuites.css" type="text/css" />
+  <link rel="stylesheet" href="node_modules/jspreadsheet-ce/dist/jspreadsheet.css" type="text/css" />
+  <link rel="stylesheet" href="css/studio.css" />
+</head>
+<body>
+  <header>
+    <div class="title-row">
+      <h1>Studio Produits Weebi</h1>
+      <div class="export-block">
+        <button id="exportBtn" type="button" class="btn primary">Exporter .weebi</button>
+        <p id="exportError" class="export-error" hidden role="alert"></p>
+      </div>
+    </div>
+    <p class="tagline">
+      Éditer un catalogue Weebi, joindre des photos, exporter un fichier
+      <code>.weebi</code>.
+    </p>
+    <p class="load-line">
+      Charger
+      <label class="link">
+        .weebi
+        <input id="weebiInput" type="file" accept=".weebi,application/x-weebi-catalog" hidden />
+      </label>
+      ,
+      <label class="link">
+        JSON
+        <input id="jsonInput" type="file" accept=".json,application/json" hidden />
+      </label>
+      ou
+      <label class="link">
+        CSV
+        <input id="csvInput" type="file" accept=".csv,text/csv" hidden />
+      </label>
+    </p>
+  </header>
+
+  <main>
+    <input id="photoInput" type="file" accept="image/*" hidden />
+
+    <aside id="warningsBanner" class="warnings-banner" hidden>
+      <button type="button" id="warningsToggle" class="warnings-toggle" aria-expanded="false">
+        <span id="warningsSummary">Avertissements</span>
+        <span class="warnings-chevron" aria-hidden="true">▾</span>
+      </button>
+      <pre id="warnings" class="warnings-detail" hidden></pre>
+    </aside>
+
+    <section class="sheet-section">
+      <p id="status" class="status" role="status" hidden></p>
+      <div id="spreadsheet"></div>
+    </section>
+  </main>
+
+  <dialog id="sousProduitDialog" class="studio-dialog">
+    <form method="dialog" id="sousProduitForm" class="studio-dialog-form">
+      <h2>Lier un sous-produit</h2>
+      <p class="dialog-hint">
+        Choisissez un produit parent existant et le nombre d’unités vendues par lot.
+      </p>
+      <label class="dialog-field">
+        Produit parent
+        <select id="sousParentSelect" required></select>
+      </label>
+      <label class="dialog-field">
+        Vendu par lots de
+        <input id="sousLotInput" type="number" min="1" step="any" value="1" required />
+      </label>
+      <div class="dialog-actions">
+        <button type="submit" value="cancel" class="btn">Annuler</button>
+        <button type="submit" value="ok" class="btn primary">OK</button>
+      </div>
+    </form>
+  </dialog>
+
+  <script src="node_modules/sql.js/dist/sql-wasm.js"></script>
+  <script src="node_modules/jsuites/dist/jsuites.js"></script>
+  <script src="node_modules/jspreadsheet-ce/dist/index.js"></script>
+  <script type="module" src="js/app.js"></script>
+</body>
+</html>

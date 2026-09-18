@@ -1,0 +1,23 @@
+{
+  "name": "studio-produits",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Gestionnaire de références produits Weebi — export .weebi",
+  "type": "module",
+  "scripts": {
+    "test": "node --test test/",
+    "test:schema": "node --test test/schema.test.js",
+    "start": "npx serve ."
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "devDependencies": {
+    "serve": "^14.2.6",
+    "sql.js": "^1.12.0"
+  },
+  "dependencies": {
+    "jspreadsheet-ce": "^5.0.4",
+    "jsuites": "^5.13.5"
+  }
+}

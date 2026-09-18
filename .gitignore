@@ -1,0 +1,8 @@
+node_modules/
+.DS_Store
+*.log
+dist/
+12h47m19s_articles.json
+12h47m27s_articles.csv
+test/fixtures/weebi_articles.csv
+test/fixtures/weebi_articles.json
