@@ -1,0 +1,67 @@
+name: Deploy to GitHub Pages
+
+on:
+  push:
+    branches: [ main ]
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 18
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Prepare Dist
+        run: |
+          mkdir -p dist/vendor
+          # Copy app files (preserving structure)
+          cp index.html dist/
+          cp -r js dist/
+          cp -r css dist/
+          cp -r schema dist/
+
+          # Vendor dependencies from node_modules
+          cp node_modules/jsuites/dist/jsuites.css dist/vendor/
+          cp node_modules/jsuites/dist/jsuites.js dist/vendor/
+          cp node_modules/jspreadsheet-ce/dist/jspreadsheet.css dist/vendor/
+          cp node_modules/jspreadsheet-ce/dist/index.js dist/vendor/jspreadsheet.js
+          cp node_modules/sql.js/dist/sql-wasm.js dist/vendor/
+          cp node_modules/sql.js/dist/sql-wasm.wasm dist/vendor/
+
+      - name: Patch paths for production
+        run: |
+          # Patch index.html: replace node_modules paths with vendor paths
+          sed -i 's|node_modules/jsuites/dist/jsuites.css|vendor/jsuites.css|g' dist/index.html
+          sed -i 's|node_modules/jspreadsheet-ce/dist/jspreadsheet.css|vendor/jspreadsheet.css|g' dist/index.html
+          sed -i 's|node_modules/sql.js/dist/sql-wasm.js|vendor/sql-wasm.js|g' dist/index.html
+          sed -i 's|node_modules/jsuites/dist/jsuites.js|vendor/jsuites.js|g' dist/index.html
+          sed -i 's|node_modules/jspreadsheet-ce/dist/index.js|vendor/jspreadsheet.js|g' dist/index.html
+
+          # Patch js/app.js: replace sql.js WASM locateFile path
+          sed -i 's|./node_modules/sql.js/dist/|./vendor/|g' dist/js/app.js
+
+      - name: Setup Pages
+        uses: actions/configure-pages@v4
+
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: './dist'
+
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
