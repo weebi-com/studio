@@ -2,7 +2,7 @@
   "name": "studio-weebi",
   "version": "0.1.0",
   "private": true,
-  "description": "Studio Weebi — gestionnaire de références articles, export .weebi",
+  "description": "Studio Weebi — gestionnaire de références articles, export .db",
   "type": "module",
   "scripts": {
     "test": "node --test test/",

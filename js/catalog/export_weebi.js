@@ -16,7 +16,7 @@ async function resolveInitSqlJs(options = {}) {
 }
 
 /**
- * Export an in-memory catalog to .weebi SQLite bytes.
+ * Export an in-memory catalog to .db SQLite bytes.
  * Assigns sequential temp calibre ids starting at 1.
  *
  * @param {{

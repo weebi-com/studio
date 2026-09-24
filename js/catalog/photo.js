@@ -1,7 +1,7 @@
 /** Max edge length (px) for catalog photos before JPEG encode. */
 export const PHOTO_MAX_EDGE = 800;
 
-/** JPEG quality ~0.7 for .weebi BLOBs. */
+/** JPEG quality ~0.7 for .db BLOBs. */
 export const PHOTO_JPEG_QUALITY = 0.7;
 
 /**

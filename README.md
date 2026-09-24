@@ -4,20 +4,20 @@ Gestionnaire de références articles Weebi (éditeur libre, sans authentificati
 
 ## Objectif
 
-- Charger un pack **`.weebi`**, un export Weebi (**JSON articles**) ou un CSV Studio
+- Charger un pack **`.db`**, un export Weebi (**JSON articles**) ou un CSV Studio
 - Éditer en tableur (jspreadsheet) avec types **Article / Article parent / Sous-article**
 - Joindre des **photos** (redimensionnées JPEG, BLOB dans le pack)
-- Exporter un fichier **SQLite `.weebi`** importable dans l’app Weebi
+- Exporter un fichier **SQLite `.db`** importable dans l’app Weebi
 
 ## Workflow recommandé
 
-1. **Charger** un `.weebi`, un JSON Weebi (`*_articles.json`), ou un CSV Studio
+1. **Charger** un `.db` existant, un JSON Weebi (`*_articles.json`), ou un CSV Studio
 2. Pour un article simple : Type **Article**, renseigner libellé / prix / lots
 3. Pour des déclinaisons (ex. Coca 33cl + Coca x6) :
    - créer une ligne **Article parent** (nom du calibre, sans prix)
    - sur une autre ligne, passer Type à **Sous-article** → dialogue (parent + **Vendu par lots de**)
 4. Optionnel : cliquer **Photo** pour joindre une image
-5. **Exporter .weebi** → importer le pack dans Weebi
+5. **Exporter .db** → importer le pack dans Weebi
 
 ### Colonnes
 
@@ -33,16 +33,16 @@ Gestionnaire de références articles Weebi (éditeur libre, sans authentificati
 
 | Source | Usage |
 |--------|--------|
-| **`.weebi`** | Pack SQLite Studio ↔ Weebi (réouverture complète) |
+| **`.db`** | Pack SQLite Studio ↔ Weebi (réouverture complète) |
 | **JSON Weebi** (`*_articles.json`) | Catalogue existant (calibres + articles) |
 | **CSV Studio** (`type,name,lot,…`) | Création greenfield / Excel |
 | **CSV Studio historique** (`calibre_title,…`) | Best-effort + avertissement |
 | **CSV Weebi** (`*_articles.csv`) | Best-effort (incomplet) |
 
-## Format `.weebi`
+## Format `.db` (SQLite)
 
-- Extension : `.weebi`
-- MIME : `application/x-weebi-catalog`
+- Extension : `.db`
+- MIME : `application/x-sqlite3`
 - Schéma versionné : [`schema/v1.sql`](schema/v1.sql) — `VERSION` = `1`
 - Photos en BLOB JPEG (max ~800 px côté long, qualité ~0.7)
 
@@ -64,8 +64,8 @@ npm start
 
 ## Limites v1
 
-- Articles **retail** uniquement (paniers ignorés à l’import JSON / `.weebi`)
+- Articles **retail** uniquement (paniers ignorés à l’import JSON / `.db`)
 - `stock_unit` fixé à `unit`
 - Cap soft : ~500 articles, peu de photos
 - Pas d’auto-promotion d’un Article en Article parent
-- Pas de chargement des exports catégories / chemins photos Weebi (hors pack `.weebi`)
+- Pas de chargement des exports catégories / chemins photos Weebi (hors pack `.db`)

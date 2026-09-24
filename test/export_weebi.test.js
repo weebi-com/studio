@@ -10,7 +10,7 @@ const __dirname = dirname(fileURLToPath(import.meta.url));
 const root = join(__dirname, '..');
 
 describe('exportWeebiBytes', () => {
-  it('writes a valid .weebi sqlite pack with remappable temp ids', async () => {
+  it('writes a valid .db sqlite pack with remappable temp ids', async () => {
     const catalog = {
       calibres: [
         {

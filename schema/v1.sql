@@ -1,6 +1,6 @@
 -- Weebi catalog pack schema v1
 -- Field names aligned with weebi-com/protos (CalibrePb, ArticleRetailPb, CategoryPb, ArticlePhotoPb)
--- Interchange file extension: .weebi
+-- Interchange file extension: .db
 
 CREATE TABLE meta (
   key   TEXT PRIMARY KEY NOT NULL,

@@ -1,7 +1,7 @@
 // Keep in sync with schema/v1.sql — verified by test/schema_ddl_sync.test.js
 export const SCHEMA_V1_SQL = `-- Weebi catalog pack schema v1
 -- Field names aligned with weebi-com/protos (CalibrePb, ArticleRetailPb, CategoryPb, ArticlePhotoPb)
--- Interchange file extension: .weebi
+-- Interchange file extension: .db
 
 CREATE TABLE meta (
   key   TEXT PRIMARY KEY NOT NULL,

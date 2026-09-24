@@ -5,7 +5,7 @@ import { parseCatalogCsv } from '../js/catalog/parse_csv.js';
 import { exportWeebiBytes } from '../js/catalog/export_weebi.js';
 import { importWeebiBytes } from '../js/catalog/import_weebi.js';
 
-describe('csv → .weebi roundtrip', () => {
+describe('csv → .db roundtrip', () => {
   it('exports parsed CSV and reopens counts', async () => {
     const csv = [
       'calibre_title,article_id,designation,price,cost,barcode_ean,units_in_one_piece,category',

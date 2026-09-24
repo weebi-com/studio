@@ -786,16 +786,16 @@ weebiInput.addEventListener('change', async () => {
   if (!file) {
     return;
   }
-  setStatus('Lecture .weebi…');
+  setStatus('Lecture .db…');
   try {
     const buffer = await file.arrayBuffer();
     const catalog = await importWeebiBytes(new Uint8Array(buffer), {
       locateFile: (f) => `./node_modules/sql.js/dist/${f}`,
     });
-    applyLoadedCatalog(catalog, 'Pack .weebi');
+    applyLoadedCatalog(catalog, 'Pack .db');
   } catch (e) {
     console.error(e);
-    setStatus(`Erreur .weebi: ${e}`);
+    setStatus(`Erreur .db: ${e}`);
   }
   weebiInput.value = '';
 });
@@ -890,19 +890,19 @@ exportBtn.addEventListener('click', async () => {
     return;
   }
   setExportError('');
-  setStatus('Export .weebi…');
+  setStatus('Export .db…');
   try {
     const bytes = await exportWeebiBytes(catalog, {
       locateFile: (file) => `./node_modules/sql.js/dist/${file}`,
     });
-    const blob = new Blob([bytes], { type: 'application/x-weebi-catalog' });
+    const blob = new Blob([bytes], { type: 'application/x-sqlite3' });
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = 'catalogue.weebi';
+    a.download = 'catalogue.db';
     a.click();
     URL.revokeObjectURL(url);
-    setStatus('Fichier catalogue.weebi téléchargé.');
+    setStatus('Fichier catalogue.db téléchargé.');
   } catch (e) {
     console.error(e);
     setExportError(`Erreur export: ${e}`);

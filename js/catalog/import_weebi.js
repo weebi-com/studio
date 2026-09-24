@@ -1,5 +1,5 @@
 /**
- * Import a .weebi SQLite catalog pack into the in-memory Studio catalog.
+ * Import a .db SQLite catalog pack into the in-memory Studio catalog.
  * Mirror of weebi_app WeebiCatalogReader — keep schema checks in sync with schema/v1.sql.
  */
 
@@ -67,11 +67,11 @@ export async function importWeebiBytes(bytes, options = {}) {
         : Uint8Array.from(bytes ?? []);
 
   if (raw.length < 16) {
-    throw new Error('fichier .weebi vide ou invalide');
+    throw new Error('fichier .db vide ou invalide');
   }
   const magic = String.fromCharCode(...raw.slice(0, 6));
   if (magic !== 'SQLite') {
-    throw new Error('fichier .weebi invalide : en-tête SQLite manquant');
+    throw new Error('fichier .db invalide : en-tête SQLite manquant');
   }
 
   const init = await resolveInitSqlJs(options);
@@ -86,7 +86,7 @@ export async function importWeebiBytes(bytes, options = {}) {
       "SELECT value FROM meta WHERE key = 'schema_version'",
     );
     if (versionRows.length === 0) {
-      throw new Error('fichier .weebi invalide : schema_version manquant');
+      throw new Error('fichier .db invalide : schema_version manquant');
     }
     const schemaVersion = Number.parseInt(String(versionRows[0].value), 10);
     if (schemaVersion !== 1) {
