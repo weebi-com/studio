@@ -6,3 +6,11 @@ dist/
 12h47m27s_articles.csv
 test/fixtures/weebi_articles.csv
 test/fixtures/weebi_articles.json
+/data
+/catalogs
+package-lock.json
+scripts/dakar_catalog.mjs
+scripts/build_dakar_catalog.mjs
+scripts/activity_catalogs.mjs
+test/activity_catalogs.test.js
+test/dakar_catalog.test.js
